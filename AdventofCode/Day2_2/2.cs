@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-long totalScore = 0;
+int totalScore = 0;
 
 var path = Path.Combine(Directory.GetCurrentDirectory(), "input.txt");
 
@@ -13,32 +13,44 @@ using (StreamReader reader = new StreamReader(path))
     {
         var parts = line.Split(" ");
         var opponentShape = (Shape)(parts[0][0] - 'A');
-        var ourShape = (Shape)(parts[1][0] - 'X');
-        totalScore += CalculateRoundScore(opponentShape, ourShape);
+        var outcome = (RoundOutcome)(parts[1][0] - 'X');
+        totalScore += CalculateRoundScore(opponentShape, outcome);
     }
 }
 
-long CalculateRoundScore(Shape opponent, Shape we)
+int CalculateRoundScore(Shape opponent, RoundOutcome outcome)
 {
-    var shapeScore = GetShapeScore(we);
-    var roundScore = 3;
-    if (opponent != we)
+    var roundScore = (int)outcome * 3;
+    var shapeScore = 0;
+    if (outcome == RoundOutcome.Draw)
     {
-        int ourShapeIndex = (int)we;
-        int opponentShapeIndex = (int)opponent;
-        roundScore = ourShapeIndex == (opponentShapeIndex + 1) % 3 ? 6 : 0;
+        shapeScore = GetShapeScore(opponent);
     }
-
+    else if (outcome == RoundOutcome.Win)
+    {
+        shapeScore = GetShapeScore((Shape)(((int)opponent + 1) % 3));
+    }
+    else
+    {
+        shapeScore = GetShapeScore((Shape)(((int)opponent + 2) % 3));
+    }
     return shapeScore + roundScore;
 }
 
 Console.WriteLine(totalScore.ToString()); // answer
 
-long GetShapeScore(Shape shape) => (int)shape + 1;
+int GetShapeScore(Shape shape) => (int)shape + 1;
 
 enum Shape
 {
     Rock,
     Paper,
     Scissors
+}
+
+enum RoundOutcome
+{
+    Loss,
+    Draw,
+    Win
 }
