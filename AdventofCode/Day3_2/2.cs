@@ -42,7 +42,7 @@ using (StreamReader reader = new StreamReader(path))
 
 
     string FindCommonChars(List<string> elfGroup){
-        // can assume firstcompartment == secondcompartment
+        // ugly code, might refactor later
         HashSet<char> firstelf = new HashSet<char>(elfGroup[0]);
         HashSet<char> secondelf = new HashSet<char>(elfGroup[1]);
         HashSet<char> thirdelf = new HashSet<char>(elfGroup[2]);
