@@ -22,9 +22,8 @@ using (StreamReader reader = new StreamReader(path))
         List<int> elf1Land = CreateList(int.Parse(firstElf.Split("-")[0]), int.Parse(firstElf.Split("-")[1]));
         List<int> elf2Land = CreateList(int.Parse(secondElf.Split("-")[0]), int.Parse(secondElf.Split("-")[1]));
 
-        if (elf1Land.All(i => elf2Land.Contains(i)) || elf2Land.All(i => elf1Land.Contains(i))) // check if subset
+        if (elf1Land.Any(i => elf2Land.Contains(i)) || elf2Land.Any(i => elf1Land.Contains(i))) // check if any match
         {
-            Console.WriteLine("Same");
             same++;
         }
     }
