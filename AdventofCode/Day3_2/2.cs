@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.IO.Pipes;
+using System.Net;
 
 int totalScore = 0;
 
@@ -7,45 +8,56 @@ var path = Path.Combine(Directory.GetCurrentDirectory(), "input.txt");
 
 List<string> text = File.ReadAllLines(path).ToList();
 int total = 0;
+List<List<string>> elfGroups = new List<List<string>>();
 using (StreamReader reader = new StreamReader(path))
 {
     string line;
-    while ((line = reader.ReadLine()) != null)
+    int count = 0;
+
+    List<string> elfGroup = new List<string>();
+
+    while ((line = reader.ReadLine()) != null) // get groups of 6 elves and find common between first three and last three
     {
-        string firstCompartment = line.Substring(0, line.Length / 2);
-        string secondCompartment = line.Substring(line.Length / 2 );
-        List<char> common = new List<char>();
+        elfGroup.Add(line);
 
-        common = FindCommonChars(firstCompartment, secondCompartment).ToList();
-
-        total += totalValue(common);
+        if (count == 5)
+        {
+            elfGroups.Add(elfGroup);
+            elfGroup = new List<string>();
+        }
+        count = (count + 1) % 6;
     }
+    //Console.ReadLine();
 
-    Console.WriteLine(total);
+    foreach (List<string> a in elfGroups)
+    {
+        string group1 = FindCommonChars(a.Take(3).ToList());
+        string group2 = FindCommonChars(a.Skip(3).Take(3).ToList());
+
+        totalScore += totalValue(group1);
+        totalScore += totalValue(group2);
+    }
+    Console.WriteLine(totalScore);
     Console.ReadLine();
 
-    HashSet<char> FindCommonChars(string firstCompartment, string secondCompartment){
+
+    string FindCommonChars(List<string> elfGroup){
         // can assume firstcompartment == secondcompartment
-        HashSet<char> firstCompartmentSet = new HashSet<char>();
-        HashSet<char> secondCompartmentSet = new HashSet<char>();
+        HashSet<char> firstelf = new HashSet<char>(elfGroup[0]);
+        HashSet<char> secondelf = new HashSet<char>(elfGroup[1]);
+        HashSet<char> thirdelf = new HashSet<char>(elfGroup[2]);
 
-        string matching = "";
+        HashSet<char> intersect = new HashSet<char>(firstelf);
 
-        for (int i = 0; i<firstCompartment.Length; i++)
-        {
-            firstCompartmentSet.Add(firstCompartment[i]);
-            secondCompartmentSet.Add(secondCompartment[i]);
-        }
+        intersect.IntersectWith(secondelf);
+        intersect.IntersectWith(thirdelf);
 
-        HashSet<char> answer = new HashSet<char>(firstCompartmentSet);
+        List<char> answer = intersect.ToList();
 
-        answer.IntersectWith(secondCompartmentSet);
-
-        return answer;
-
+        return new string(answer.ToArray());
     }
 
-    int totalValue(List<char> list)
+    int totalValue(string list)
     {
         int total = 0;
 
