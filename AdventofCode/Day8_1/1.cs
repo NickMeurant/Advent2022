@@ -1,4 +1,5 @@
 ﻿
+using System.Data;
 using System.Linq.Expressions;
 
 var path = Path.Combine(Directory.GetCurrentDirectory(), "input.txt");
@@ -14,21 +15,23 @@ for (int x = 0; x < width; x++)
 {
     for (int y = 0; y < height; y++)
     {
-        grid[x, y] = lines[y][x] - '0';
+        grid[x, y] = lines[x][y] - '0';
     }
 }
 
 // traverse accross the top and bottom first
-
-Console.WriteLine(grid[0,0]);
+Console.WriteLine("Outer Row");
 for(int x = 0; x < width; x++)
 {
     Traverse(0, x, 0);
+    Traverse(height -1, x, 2);
 }
 
+Console.WriteLine("Outer Column");
 for (int x = 0; x < height; x++)
 {
     Traverse(x, 0, 1);
+    Traverse(x, width -1, 3);
 }
 
 var visibilityCounter = 0;
@@ -38,8 +41,13 @@ for (int x = 0; x < width; x++)
     {
         if (visible[x, y])
         {
+            //Console.WriteLine("Row: " + x + " Column: " + y);
             visibilityCounter++;
         }
+        //else
+        //{
+        //    Console.WriteLine("Row: " + (x+1) + " Column: " + (y+1));
+        //}
     }
 }
 
@@ -53,15 +61,23 @@ void Traverse(int row, int column, int directionType) // x and y = direction
 
     (int x, int y) direction = (0, 0);
 
-    // directionType 0 = right, 1 = down
+    // directionType 0 = down, 1 = right
 
-    if(directionType == 0) // rows
+    if(directionType == 0) // down
+    {
+        direction = (1, 0);
+    }
+    else if(directionType == 1)// right
     {
         direction = (0, 1);
     }
-    else // columns
+    else if(directionType == 2) // up
     {
-        direction = (1, 0);
+        direction = (-1, 0);
+    }
+    else
+    {
+        direction = (0, -1); // left
     }
 
     row += direction.x;
@@ -73,10 +89,6 @@ void Traverse(int row, int column, int directionType) // x and y = direction
         {
             visible[row, column] = true;
             maxHeight = grid[row, column];
-            if (maxHeight == 9)
-            {
-                break;
-            }
         }
         else if (row == 0 || column == 0 || row == width - 1 || column == height - 1)
         {
