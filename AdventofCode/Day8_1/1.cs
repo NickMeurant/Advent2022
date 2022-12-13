@@ -41,13 +41,8 @@ for (int x = 0; x < width; x++)
     {
         if (visible[x, y])
         {
-            //Console.WriteLine("Row: " + x + " Column: " + y);
             visibilityCounter++;
         }
-        //else
-        //{
-        //    Console.WriteLine("Row: " + (x+1) + " Column: " + (y+1));
-        //}
     }
 }
 
