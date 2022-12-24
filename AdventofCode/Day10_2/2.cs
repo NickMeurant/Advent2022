@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 var path = Path.Combine(Directory.GetCurrentDirectory(), "input.txt");
 
@@ -40,6 +41,7 @@ foreach (var line in lines)
 var breakpoints = new int[]
 {
     20,
+    20,
     60,
     100,
     140,
@@ -47,23 +49,25 @@ var breakpoints = new int[]
     220
 };
 
-foreach (KeyValuePair<int, int> pair in cycleValues)
-{
-    Console.WriteLine(pair.Key);
-}
+StringBuilder stringBuild = new();
 
-foreach (var breakpoint in breakpoints)
+for (int i = 0; i < 240; i++)
 {
-    if (cycleValues.ContainsKey(breakpoint))
+    if ((i % 40) == 0) stringBuild.AppendLine();
+
+    if (cycleValues.ContainsKey(i) && (cycleValues[i] - 1 <= (i % 40) && (i % 40) <= cycleValues[i] + 1)) // since adding skips two cycles, need to check cycle before to find value
     {
-        Console.WriteLine((breakpoint) * cycleValues[breakpoint]);
-        product += (breakpoint) * cycleValues[breakpoint];
+        stringBuild.Append('#');
+    }
+    else if( cycleValues.ContainsKey(i + 1) && (cycleValues[i + 1] - 1 <= (i % 40) && (i % 40) <= cycleValues[i + 1] + 1))
+    {
+        stringBuild.Append('#');
     }
     else
     {
-        Console.WriteLine((breakpoint) * cycleValues[breakpoint - 1]);
-        product += (breakpoint) * cycleValues[breakpoint - 1];
+        stringBuild.Append('.');
     }
+
 }
 
-Console.WriteLine(product);
+Console.WriteLine(stringBuild.ToString());
